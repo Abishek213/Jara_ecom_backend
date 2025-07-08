@@ -1,39 +1,25 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6,
-  },
-  role: {
-    type: String,
-    enum: ['customer', 'admin', 'manufacturer'],
-    default: 'customer',
-  },
-}, { timestamps: true });
-
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
+const addressSchema = new mongoose.Schema({
+  type: String,
+  location: String,
+  city: String,
+  province: String,
+  isDefault: Boolean
 });
 
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true },
+  phone: String,
+  password_hash: String,
+  user_type: { type: String, enum: ['customer', 'admin', 'vendor', 'manufacturer'] },
+  status: { type: String, enum: ['active', 'suspended'], default: 'active' },
+  addresses: [addressSchema],
+  created_at: { type: Date, default: Date.now },
+  social_auth: {
+    google_id: String
+  }
+});
 
-export default mongoose.model('User', userSchema);
+export const User = mongoose.model('User', userSchema);
