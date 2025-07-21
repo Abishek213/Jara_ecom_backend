@@ -4,6 +4,7 @@ import { BadRequestError } from '../utils/errors.js';
 import ShippingZone from '../models/ShippingZone.js';
 
 export const calculateShippingCost = async (address, items) => {
+
   try {
     // Check if address is in remote area
     const zone = await ShippingZone.findOne({
