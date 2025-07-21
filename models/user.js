@@ -100,8 +100,7 @@ userSchema.pre('remove', async function(next) {
 
 // Sign JWT and return
 userSchema.methods.getSignedJwtToken = function() {
-  console.log("JWT_SECRET VALUE:", process.env.JWT_SECRET);
-  console.log("USER ID:", this._id);
+  
   return jwt.sign(
     { id: this._id, userType: this.user_type }, 
     JWT_SECRET, 
