@@ -41,7 +41,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
+// import mongoSanitize from 'express-mongo-sanitize';
 import hpp from 'hpp';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -93,7 +93,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Sanitize data
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 // Prevent parameter pollution
 app.use(hpp());

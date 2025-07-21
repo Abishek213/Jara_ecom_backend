@@ -3,6 +3,12 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/constants.js';
 import { USER_ROLES } from '../enums/roles.enum.js';
+import crypto from 'crypto';
+// const { sign } = jwt;
+// import { sign } from 'jsonwebtoken';
+
+
+
 
 const addressSchema = new mongoose.Schema({
   type: { type: String, enum: ['home', 'work', 'other'], default: 'home' },
@@ -94,6 +100,8 @@ userSchema.pre('remove', async function(next) {
 
 // Sign JWT and return
 userSchema.methods.getSignedJwtToken = function() {
+  console.log("JWT_SECRET VALUE:", process.env.JWT_SECRET);
+  console.log("USER ID:", this._id);
   return jwt.sign(
     { id: this._id, userType: this.user_type }, 
     JWT_SECRET, 

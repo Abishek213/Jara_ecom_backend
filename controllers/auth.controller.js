@@ -1,4 +1,4 @@
-import User from '../models/User.js';
+import User from '../models/user.js';
 import { sendWelcomeEmail, sendPasswordResetEmail } from '../services/email.service.js';
 import { successResponse } from '../utils/responseHandler.js';
 import { BadRequestError, UnauthenticatedError } from '../utils/errors.js';
