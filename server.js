@@ -1,41 +1,3 @@
-// import express from 'express';
-// import dotenv from 'dotenv';
-// import connectDB from './config/db.js';
-// import authRoutes from './routes/authRoutes.js';
-// import cors from 'cors';
-// import paymentRoutes from './routes/paymentRoutes.js';
-// import bodyParser from 'body-parser';
-
-
-// dotenv.config();
-// const app = express();
-// app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
-
-
-// // Middleware
-// app.use(express.json()); // for parsing JSON bodies
-// app.use(cors());
-
-// app.use('/api/auth', authRoutes);
-// app.use('/api/payment', paymentRoutes);
-
-// // Test route
-// app.get('/', (req, res) => {
-//   res.send('API is running...');
-// });
-
-// // Connect DB and start server
-// const PORT = process.env.PORT || 5000;
-
-// connectDB().then(() => {
-//   app.listen(PORT, () => {
-//     console.log(`🚀 Server running at http://localhost:${PORT}`);
-//   });
-// });
-
-import dotenv from 'dotenv';
-dotenv.config(); // Must be first
-
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -63,7 +25,7 @@ import paymentRoutes from './routes/payment.routes.js';
 
 // ES module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const _dirname = path.dirname(_filename);
 
 // Initialize express
 const app = express();
@@ -115,19 +77,24 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/promos', promoRoutes);
 app.use('/api/payment', paymentRoutes);
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ success: true, message: 'Backend is connected and working!' });
+});
+
 // Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
 
+// Start the server
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   logger.info(`Server running in ${NODE_ENV} mode on port ${PORT}`);
 });
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
   logger.error(`Error: ${err.message}`);
-  // Close server & exit process
   server.close(() => process.exit(1));
 });
