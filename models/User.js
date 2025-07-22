@@ -99,12 +99,11 @@ userSchema.pre('remove', async function(next) {
 });
 
 // Sign JWT and return
-userSchema.methods.getSignedJwtToken = function() {
-  
+userSchema.methods.getSignedJwtToken = function () {
   return jwt.sign(
-    { id: this._id, userType: this.user_type }, 
-    JWT_SECRET, 
-    { expiresIn: JWT_EXPIRES_IN }
+    { id: this._id, userType: this.user_type },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN }
   );
 };
 
