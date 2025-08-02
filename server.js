@@ -1,3 +1,6 @@
+
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -25,7 +28,7 @@ import paymentRoutes from './routes/payment.routes.js';
 
 // ES module fix for __dirname
 const __filename = fileURLToPath(import.meta.url);
-const _dirname = path.dirname(_filename);
+const __dirname = path.dirname(__filename);
 
 // Initialize express
 const app = express();

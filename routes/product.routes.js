@@ -31,6 +31,7 @@ router.use(authenticateUser);
 
 router.post(
   '/',
+ 
   authorizeRoles('admin', 'vendor'),
   validateRequest(validateCreateProductInput),
   createProduct

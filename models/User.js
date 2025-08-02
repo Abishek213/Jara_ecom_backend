@@ -7,9 +7,6 @@ import crypto from 'crypto';
 // const { sign } = jwt;
 // import { sign } from 'jsonwebtoken';
 
-
-
-
 const addressSchema = new mongoose.Schema({
   type: { type: String, enum: ['home', 'work', 'other'], default: 'home' },
   first_name: String,
@@ -101,7 +98,7 @@ userSchema.pre('remove', async function(next) {
 // Sign JWT and return
 userSchema.methods.getSignedJwtToken = function () {
   return jwt.sign(
-    { id: this._id, userType: this.user_type },
+    { id: this._id, user_type: this.user_type },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
