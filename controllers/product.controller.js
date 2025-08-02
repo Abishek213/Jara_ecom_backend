@@ -45,10 +45,24 @@ export const getProduct = async (req, res, next) => {
 // @route   POST /api/products
 // @access  Private (Admin/Vendor)
 export const createProduct = async (req, res, next) => {
+  
   // Set vendor_id if user is vendor
   if (req.user.user_type === USER_ROLES.VENDOR) {
     req.body.vendor_id = req.user._id;
     req.body.product_type = 'factory';
+  }
+
+  if (!req.body.categories) {
+    throw new BadRequestError('Categories field is required');
+  }
+
+  // Convert single ID to array if needed
+  if (!Array.isArray(req.body.categories)) {
+    if (typeof req.body.categories === 'string') {
+      req.body.categories = [req.body.categories];
+    } else {
+      throw new BadRequestError('Categories must be an array or a single ID string');
+    }
   }
 
   // Check if categories exist

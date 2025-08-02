@@ -8,7 +8,9 @@ export const validateCreateProductInput = Joi.object({
   base_price: Joi.number().min(0).required(),
   discount_price: Joi.number().min(0).less(Joi.ref('base_price')),
   stock_qty: Joi.number().integer().min(0).required(),
-  categories: Joi.array().items(Joi.string()).min(1).required(),
+categories: Joi.array().items(
+    Joi.string().pattern(/^[0-9a-fA-F]{24}$/, 'MongoDB ObjectId')
+  ).min(1).required(),
   sizes: Joi.array().items(Joi.string()),
   colors: Joi.array().items(Joi.string()),
   weight: Joi.number().min(0),

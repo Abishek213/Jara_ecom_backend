@@ -7,7 +7,9 @@ import { UnauthenticatedError, UnauthorizedError } from '../utils/errors.js';
 
 export const authenticateUser = async (req, res, next) => {
   let token;
-  
+  console.log('Auth header:', req.headers.authorization);
+  console.log('Cookie token:', req.cookies?.token);
+
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
   } else if (req.cookies?.token) {
@@ -19,10 +21,14 @@ export const authenticateUser = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('Decoded Token:', decoded);
     
     let user;
-    if (decoded.userType === 'admin') {
+    // Check for both userType (old) and user_type (new) for backward compatibility
+    const role = decoded.user_type || decoded.userType;
+    
+    if (role === 'admin') {
       user = await Admin.findById(decoded.id).select('-password_hash');
     } else {
       user = await User.findById(decoded.id).select('-password_hash');
@@ -32,8 +38,9 @@ export const authenticateUser = async (req, res, next) => {
       throw new UnauthenticatedError('User not found');
     }
 
+    // Assign the consistent role to req.user
     req.user = user;
-    req.userType = decoded.userType;
+    req.user.user_type = role;  // Now using user_type consistently
     next();
   } catch (error) {
     logger.error('Authentication error:', error);
@@ -43,10 +50,10 @@ export const authenticateUser = async (req, res, next) => {
 
 export const authorizeRoles = (...roles) => {
   return (req, res, next) => {
+    console.log('AuthorizeRoles - User role:', req.user.user_type);
+    console.log('AuthorizeRoles - Allowed roles:', roles);
     if (!roles.includes(req.user.user_type)) {
-      throw new UnauthorizedError(
-        `User role ${req.user.user_type} is not authorized to access this route`
-      );
+      return res.status(403).json({ success: false, error: `User role ${req.user.user_type} is not authorized to access this route` });
     }
     next();
   };
